@@ -15,7 +15,7 @@ const App = () => {
     return (
         <SafeAreaProvider>
             <PaperProvider theme={theme}>
-                <ScrollView contentContainerStyle={styles.container}>
+                <ScrollView>
                     <AutoHeightImage
                         source={{uri: 'https://i.imgur.com/yiT90vB.jpeg'}}
                         width={useWindowDimensions().width}
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     },
     optionContainer: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'flex-start',
         flexDirection: 'column',
     }
