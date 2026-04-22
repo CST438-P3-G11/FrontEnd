@@ -13,7 +13,7 @@ const App = () => {
         : MD3LightTheme;
 
     return (
-        <SafeAreaProvider style={{paddingTop: useSafeAreaInsets().top}}>
+        <SafeAreaProvider>
             <PaperProvider theme={theme}>
                 <ScrollView contentContainerStyle={styles.container}>
                     <AutoHeightImage
