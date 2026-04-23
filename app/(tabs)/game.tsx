@@ -1,8 +1,8 @@
-import {Animated, StyleSheet, useColorScheme, useWindowDimensions, View} from 'react-native';
+import {Animated, Button, StyleSheet, useColorScheme, useWindowDimensions, View} from 'react-native';
 import {MD3DarkTheme, MD3LightTheme, PaperProvider, RadioButton} from "react-native-paper";
 import React from "react";
 import AutoHeightImage from "react-native-auto-height-image";
-import {SafeAreaProvider, useSafeAreaInsets} from "react-native-safe-area-context";
+import {SafeAreaProvider} from "react-native-safe-area-context";
 import ScrollView = Animated.ScrollView;
 
 const App = () => {
@@ -11,6 +11,7 @@ const App = () => {
     const theme = colorScheme === 'dark'
         ? {...MD3DarkTheme, colors: {...MD3DarkTheme.colors, onSurface: '#FFFFFF'}}
         : MD3LightTheme;
+    const [pressed, setPressed] = React.useState(false);
 
     return (
         <SafeAreaProvider>
@@ -44,6 +45,9 @@ const App = () => {
                             />
                         </View>
                     </RadioButton.Group>
+                    <View style={styles.button}>
+                        <Button title="Submit"/>
+                    </View>
                 </ScrollView>
             </PaperProvider>
         </SafeAreaProvider>
@@ -63,5 +67,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'flex-start',
         flexDirection: 'column',
+    },
+    button: {
+        marginHorizontal: 10
     }
 });
