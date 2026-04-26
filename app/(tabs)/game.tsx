@@ -1,6 +1,6 @@
 import {Animated, Button, StyleSheet, useColorScheme, useWindowDimensions, View} from 'react-native';
 import {MD3DarkTheme, MD3LightTheme, PaperProvider, RadioButton} from "react-native-paper";
-import React from "react";
+import React, {useEffect} from "react";
 import AutoHeightImage from "react-native-auto-height-image";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import ScrollView = Animated.ScrollView;
@@ -35,18 +35,52 @@ const photoList: Photo[] = [
 
 const App = () => {
     const [checked, setChecked] = React.useState('none');
+    // const [answers, setAnswers] = React.useState<number[]>([]);
+    // const [correct, setCorrect] = React.useState<number>();
     const colorScheme = useColorScheme();
     const theme = colorScheme === 'dark'
         ? {...MD3DarkTheme, colors: {...MD3DarkTheme.colors, onSurface: '#FFFFFF'}}
         : MD3LightTheme;
     const [pressed, setPressed] = React.useState(false);
 
+    //temporary functions to get a random ID from the list, remove/comment out once we're properly fetching from the backend
+    const getAnswers = () => {
+        let answers: number[] = [];
+        while (answers.length <= 3) {
+            let num = Math.floor(Math.random() * planeList.length);
+            while (answers.includes(num)) {
+                num = Math.floor(Math.random() * planeList.length);
+            }
+            answers.push(num)
+        }
+        return answers;
+    }
+
+    const pickPlane = () => {
+        return Math.floor(Math.random() * 4);
+    }
+
+    const answers = getAnswers();
+    const correct = pickPlane();
+
+    console.log(answers);
+    console.log(correct);
+
+    // useEffect(() => {
+    //     getAnswers().then(answers => setAnswers(answers));
+    // })
+    //
+    // useEffect(() => {
+    //     pickPlane().then(correct => setCorrect(answers[correct]));
+
+    // })
+
     return (
         <SafeAreaProvider>
             <PaperProvider theme={theme}>
                 <ScrollView>
                     <AutoHeightImage
-                        source={{uri: 'https://i.imgur.com/yiT90vB.jpeg'}}
+                        source={{uri: photoList[correct].url}}
                         width={useWindowDimensions().width}
                     />
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
