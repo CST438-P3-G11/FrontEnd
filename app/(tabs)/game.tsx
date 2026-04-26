@@ -5,6 +5,34 @@ import AutoHeightImage from "react-native-auto-height-image";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import ScrollView = Animated.ScrollView;
 
+interface Plane {
+    plane_id: number;
+    name: string;
+}
+
+interface Photo {
+    plane_id: number;
+    url: string;
+}
+
+const planeList: Plane[] = [
+    {plane_id: 1, name: "Airbus A320"},
+    {plane_id: 2, name: "Boeing 737-800"},
+    {plane_id: 3, name: "McDonnell Douglas MD-83"},
+    {plane_id: 4, name: "Boeing 757-300"},
+    {plane_id: 5, name: "Airbus A350-900"},
+    {plane_id: 6, name: "Bombardier Challenger 650"}
+]
+
+const photoList: Photo[] = [
+    {plane_id: 1, url: "https://cdn.jetphotos.com/full/2/15190_1063675846.jpg"},
+    {plane_id: 2, url: "https://cdn.jetphotos.com/full/6/52128_1655584941.jpg"},
+    {plane_id: 3, url: "https://upload.wikimedia.org/wikipedia/commons/6/64/McDonnell_Douglas_MD-83_American_Airlines_N9615W_%288516015305%29.jpg"},
+    {plane_id: 4, url: "https://i0.wp.com/northwestairlineshistory.org/wp-content/uploads/2020/04/NWA_753_N591NW_MSP_2009-03_Norris.jpg"},
+    {plane_id: 5, url: "https://static0.simpleflyingimages.com/wordpress/wp-content/uploads/2021/02/French-bee-Airbus-A350-941-F-HREV-2-scaled.jpg"},
+    {plane_id: 6, url: "https://chapmanfreeborn.aero/wp-content/uploads/2025/01/Bombardier-Challenger-650-feature-image.jpg"}
+]
+
 const App = () => {
     const [checked, setChecked] = React.useState('none');
     const colorScheme = useColorScheme();
