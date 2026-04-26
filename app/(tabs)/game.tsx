@@ -77,26 +77,6 @@ const App = () => {
                     />
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
                         <View style={styles.optionContainer}>
-                            {/*<RadioButton.Item*/}
-                            {/*    value="first"*/}
-                            {/*    label="Embraer 175"*/}
-                            {/*    position="leading"*/}
-                            {/*/>*/}
-                            {/*<RadioButton.Item*/}
-                            {/*    value="second"*/}
-                            {/*    label="Airbus A220"*/}
-                            {/*    position="leading"*/}
-                            {/*/>*/}
-                            {/*<RadioButton.Item*/}
-                            {/*    value="third"*/}
-                            {/*    label="Bombardier CRJ-900"*/}
-                            {/*    position="leading"*/}
-                            {/*/>*/}
-                            {/*<RadioButton.Item*/}
-                            {/*    value="fourth"*/}
-                            {/*    label="Dassault Falcon 900"*/}
-                            {/*    position="leading"*/}
-                            {/*/>*/}
                             {answerMap.map((answer, index) => (
                                 <RadioButton.Item
                                     key={answer.plane_id}
