@@ -35,8 +35,6 @@ const photoList: Photo[] = [
 
 const App = () => {
     const [checked, setChecked] = React.useState('none');
-    // const [answers, setAnswers] = React.useState<number[]>([]);
-    // const [correct, setCorrect] = React.useState<number>();
     const colorScheme = useColorScheme();
     const theme = colorScheme === 'dark'
         ? {...MD3DarkTheme, colors: {...MD3DarkTheme.colors, onSurface: '#FFFFFF'}}
@@ -56,24 +54,18 @@ const App = () => {
         return answers;
     }
 
+    //same as getAnswers
     const pickPlane = () => {
-        return Math.floor(Math.random() * 4);
+        return Math.floor(Math.random() * answers.length);
     }
 
     const answers = getAnswers();
     const correct = pickPlane();
 
-    console.log(answers);
-    console.log(correct);
-
-    // useEffect(() => {
-    //     getAnswers().then(answers => setAnswers(answers));
-    // })
-    //
-    // useEffect(() => {
-    //     pickPlane().then(correct => setCorrect(answers[correct]));
-
-    // })
+    let answerMap: Plane[] = []
+    answers.forEach((answer) => {
+        answerMap.push(planeList[answer]);
+    })
 
     return (
         <SafeAreaProvider>
@@ -85,26 +77,33 @@ const App = () => {
                     />
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
                         <View style={styles.optionContainer}>
-                            <RadioButton.Item
-                                value="first"
-                                label="Embraer 175"
-                                position="leading"
-                            />
-                            <RadioButton.Item
-                                value="second"
-                                label="Airbus A220"
-                                position="leading"
-                            />
-                            <RadioButton.Item
-                                value="third"
-                                label="Bombardier CRJ-900"
-                                position="leading"
-                            />
-                            <RadioButton.Item
-                                value="fourth"
-                                label="Dassault Falcon 900"
-                                position="leading"
-                            />
+                            {/*<RadioButton.Item*/}
+                            {/*    value="first"*/}
+                            {/*    label="Embraer 175"*/}
+                            {/*    position="leading"*/}
+                            {/*/>*/}
+                            {/*<RadioButton.Item*/}
+                            {/*    value="second"*/}
+                            {/*    label="Airbus A220"*/}
+                            {/*    position="leading"*/}
+                            {/*/>*/}
+                            {/*<RadioButton.Item*/}
+                            {/*    value="third"*/}
+                            {/*    label="Bombardier CRJ-900"*/}
+                            {/*    position="leading"*/}
+                            {/*/>*/}
+                            {/*<RadioButton.Item*/}
+                            {/*    value="fourth"*/}
+                            {/*    label="Dassault Falcon 900"*/}
+                            {/*    position="leading"*/}
+                            {/*/>*/}
+                            {answerMap.map((answer, index) => (
+                                <RadioButton.Item
+                                    key={answer.plane_id}
+                                    value={answer.name}
+                                    label={answer.name}
+                                />
+                            ))}
                         </View>
                     </RadioButton.Group>
                     <View style={styles.button}>
