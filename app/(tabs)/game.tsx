@@ -291,11 +291,11 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
     },
     correctText: {
-        color: '#2E7D32',
+        color: '#FFFFFF',
         fontWeight: 'bold',
     },
     incorrectText: {
-        color: '#C62828',
+        color: '#FFFFFF',
         fontWeight: 'bold',
     },
 });
