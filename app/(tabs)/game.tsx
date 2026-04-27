@@ -21,12 +21,30 @@ const planeList: Plane[] = [
     {plane_id: 3, name: "McDonnell Douglas MD-83"},
     {plane_id: 4, name: "Boeing 757-300"},
     {plane_id: 5, name: "Airbus A350-900"},
-    {plane_id: 6, name: "Bombardier Challenger 650"}
+    {plane_id: 6, name: "Bombardier Challenger 650"},
+    {plane_id: 7, name: "Boeing 747-400"},
+    {plane_id: 8, name: "Lockheed L-1011-500 TriStar"},
+    {plane_id: 9, name: "Douglas DC-9-50"},
+    {plane_id: 10, name: "Airbus A321neo"},
 ]
 
 const photoList: Photo[] = [
-    {plane_id: 1, url: "https://cdn.jetphotos.com/full/2/15190_1063675846.jpg"},
-    {plane_id: 2, url: "https://cdn.jetphotos.com/full/6/52128_1655584941.jpg"},
+    {
+        plane_id: 1,
+        url: "https://cdn.jetphotos.com/full/2/15190_1063675846.jpg"
+    },
+    {
+        plane_id: 1,
+        url: "https://www.aviationtoday.com/wp-content/uploads/2015/12/VirginAmericaInFlight3.jpg"
+    },
+    {
+        plane_id: 2,
+        url: "https://cdn.jetphotos.com/full/6/52128_1655584941.jpg"
+    },
+    {
+        plane_id: 2,
+        url: "https://live.staticflickr.com/4857/46193514174_460d9e865d_b.jpg"
+    },
     {
         plane_id: 3,
         url: "https://cdn.plnspttrs.net/41425/n564aa-american-airlines-mcdonnell-douglas-md-83-dc-9-83_PlanespottersNet_330634_bab0fa61d3_o.jpg"
@@ -36,12 +54,32 @@ const photoList: Photo[] = [
         url: "https://i0.wp.com/northwestairlineshistory.org/wp-content/uploads/2020/04/NWA_753_N591NW_MSP_2009-03_Norris.jpg"
     },
     {
+        plane_id: 4,
+        url: "https://cdn.jetphotos.com/full/1/47084_1158327251.jpg"
+    },
+    {
         plane_id: 5,
         url: "https://static0.simpleflyingimages.com/wordpress/wp-content/uploads/2021/02/French-bee-Airbus-A350-941-F-HREV-2-scaled.jpg"
     },
     {
         plane_id: 6,
         url: "https://chapmanfreeborn.aero/wp-content/uploads/2025/01/Bombardier-Challenger-650-feature-image.jpg"
+    },
+    {
+        plane_id: 7,
+        url: "https://i.insider.com/58b9eb7ebe967321028b4c81"
+    },
+    {
+        plane_id: 8,
+        url: "https://deltamuseum.org/images/default-source/research/aircraft-by-type/jets/lockheed-l-1011-1973-2001/l-1011-500-mountains.jpg"
+    },
+    {
+        plane_id: 9,
+        url: "https://cdn.jetphotos.com/full/1/61610_1191969628.jpg"
+    },
+    {
+        plane_id: 10,
+        url: "https://global.discourse-cdn.com/infiniteflight/original/4X/b/d/9/bd95f601c511567fb78762a301ca5eff88f8919d.jpeg"
     }
 ]
 
@@ -73,13 +111,26 @@ const App = () => {
     const [correct, setCorrect] = React.useState(pickPlane(answers));
     const [isAnswered, setIsAnswered] = React.useState(false);
     const [isCorrect, setIsCorrect] = React.useState<Boolean | null>(null);
+    const [currentPhoto, setCurrentPhoto] = React.useState<Photo | null>(null);
+    const {width} = useWindowDimensions();
+
+    React.useEffect(() => {
+        const plane = planeList[answers[correct]];
+        setCurrentPhoto(pickRandomPhoto(plane.plane_id));
+    }, []);
 
     const handlePress = () => {
         if (isAnswered) {
             const nextAnswers = getAnswers();
+            const nextCorrect = pickPlane(nextAnswers);
+
             setAnswers(nextAnswers);
-            setCorrect(pickPlane(nextAnswers));
-            setChecked('none')
+            setCorrect(nextCorrect);
+
+            const nextPlane = planeList[nextAnswers[nextCorrect]];
+            setCurrentPhoto(pickRandomPhoto(nextPlane.plane_id));
+
+            setChecked('none');
             setIsAnswered(false);
             setIsCorrect(null);
             return;
@@ -135,14 +186,27 @@ const App = () => {
         answerMap.push(planeList[answer]);
     })
 
+    const correctPlane = answerMap[correct];
+
+    const correctPhotos = photoList.filter(
+        (photo) => photo.plane_id === correctPlane.plane_id
+    );
+
+    const pickRandomPhoto = (planeId: number) => {
+        const photos = photoList.filter(p => p.plane_id === planeId);
+        return photos[Math.floor(Math.random() * photos.length)];
+    };
+
     return (
         <SafeAreaProvider>
             <PaperProvider theme={theme}>
                 <ScrollView>
-                    <AutoHeightImage
-                        source={{uri: photoList[answers[correct]].url}}
-                        width={useWindowDimensions().width}
-                    />
+                    {currentPhoto && (
+                        <AutoHeightImage
+                            source={{ uri: currentPhoto.url }}
+                            width={width}
+                        />
+                    )}
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
                         {answerMap.map((answer, index) => {
                             const correctId = answerMap[correct].plane_id.toString();
