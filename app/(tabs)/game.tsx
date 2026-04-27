@@ -45,42 +45,76 @@ const photoList: Photo[] = [
     }
 ]
 
+//temporary functions to get a random ID from the list, remove/comment out once we're properly fetching from the backend
+const getAnswers = () => {
+    let answers: number[] = [];
+    while (answers.length <= 3) {
+        let num = Math.floor(Math.random() * planeList.length);
+        while (answers.includes(num)) {
+            num = Math.floor(Math.random() * planeList.length);
+        }
+        answers.push(num)
+    }
+    return answers;
+}
+
+//same as getAnswers
+const pickPlane = (answers: string | any[]) => {
+    return Math.floor(Math.random() * answers.length);
+}
+
 const App = () => {
     const [checked, setChecked] = React.useState('none');
     const colorScheme = useColorScheme();
     const theme = colorScheme === 'dark'
         ? {...MD3DarkTheme, colors: {...MD3DarkTheme.colors, onSurface: '#FFFFFF'}}
         : MD3LightTheme;
-
-    //temporary functions to get a random ID from the list, remove/comment out once we're properly fetching from the backend
-    const getAnswers = () => {
-        let answers: number[] = [];
-        while (answers.length <= 3) {
-            let num = Math.floor(Math.random() * planeList.length);
-            while (answers.includes(num)) {
-                num = Math.floor(Math.random() * planeList.length);
-            }
-            answers.push(num)
-        }
-        return answers;
-    }
-
-    //same as getAnswers
-    const pickPlane = (answers: string | any[]) => {
-        return Math.floor(Math.random() * answers.length);
-    }
-
     const [answers, setAnswers] = React.useState(getAnswers());
     const [correct, setCorrect] = React.useState(pickPlane(answers));
+    const [isAnswered, setIsAnswered] = React.useState(false);
+    const [isCorrect, setIsCorrect] = React.useState<Boolean | null>(null);
 
     const handlePress = () => {
-        const correctAnswer = answerMap[correct].name;
+        if (isAnswered) {
+            const nextAnswers = getAnswers();
+            setAnswers(nextAnswers);
+            setCorrect(pickPlane(nextAnswers));
+            setChecked('none')
+            setIsAnswered(false);
+            setIsCorrect(null);
+            return;
+        }
 
-        if (checked === correctAnswer) {
+        const correctAnswer = answerMap[correct].plane_id.toString();
+        const result = checked === correctAnswer;
+
+        if (result) {
             console.log("Correct");
         } else {
             console.log("Incorrect");
         }
+
+        setIsCorrect(result);
+        setIsAnswered(true);
+    }
+
+    const getOptionStyle = (answer: Plane) => {
+        if (!isAnswered) {
+            return {};
+        }
+
+        const correctId = answerMap[correct].plane_id.toString();
+        const selectedId = checked;
+
+        if (answer.plane_id.toString() === correctId) {
+            return {backgroundColor: '#4CAF50'};
+        }
+
+        if (answer.plane_id.toString() === selectedId) {
+            return {backgroundColor: '#F44336'};
+        }
+
+        return {};
     }
 
     let answerMap: Plane[] = []
@@ -97,20 +131,22 @@ const App = () => {
                         width={useWindowDimensions().width}
                     />
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
-                        <View style={styles.optionContainer}>
-                            {answerMap.map((answer, index) => (
+                        {answerMap.map((answer, index) => (
+                            <View
+                                style={[styles.optionContainer, getOptionStyle(answer)]}
+                                key={answer.plane_id}>
                                 <RadioButton.Item
-                                    key={answer.plane_id}
-                                    value={answer.name}
+                                    value={answer.plane_id.toString()}
                                     label={answer.name}
                                     position="leading"
+                                    disabled={isAnswered}
                                 />
-                            ))}
-                        </View>
+                            </View>
+                        ))}
                     </RadioButton.Group>
                     <View style={styles.button}>
                         <Button
-                            title="Submit"
+                            title={isAnswered ? "Next Question" : "Submit"}
                             onPress={handlePress}
                         />
                     </View>
@@ -133,6 +169,10 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'flex-start',
         flexDirection: 'column',
+        borderRadius: 8,
+        marginVertical: 4,
+        marginHorizontal: 10,
+        paddingHorizontal: 4,
     },
     button: {
         marginHorizontal: 10
