@@ -29,7 +29,7 @@ const photoList: Photo[] = [
     {plane_id: 2, url: "https://cdn.jetphotos.com/full/6/52128_1655584941.jpg"},
     {
         plane_id: 3,
-        url: "https://upload.wikimedia.org/wikipedia/commons/6/64/McDonnell_Douglas_MD-83_American_Airlines_N9615W_%288516015305%29.jpg"
+        url: "https://cdn.plnspttrs.net/41425/n564aa-american-airlines-mcdonnell-douglas-md-83-dc-9-83_PlanespottersNet_330634_bab0fa61d3_o.jpg"
     },
     {
         plane_id: 4,
@@ -87,12 +87,6 @@ const App = () => {
 
         const correctAnswer = answerMap[correct].plane_id.toString();
         const result = checked === correctAnswer;
-
-        if (result) {
-            console.log("Correct");
-        } else {
-            console.log("Incorrect");
-        }
 
         setIsCorrect(result);
         setIsAnswered(true);
@@ -169,11 +163,11 @@ const App = () => {
                                 <Pressable
                                     key={answer.plane_id}
                                     onPress={() => !isAnswered && setChecked(id)}
-                                    style={({ pressed }) => [
+                                    style={({pressed}) => [
                                         styles.optionContainer,
                                         getOptionStyle(answer),
                                         styles.inlineRow,
-                                        pressed && !isAnswered && { opacity: 0.7 } // nice feedback
+                                        pressed && !isAnswered && {opacity: 0.7} // nice feedback
                                     ]}
                                 >
                                     <RadioButton
@@ -183,7 +177,7 @@ const App = () => {
                                         disabled={isAnswered}
                                     />
 
-                                    <Text style={[styles.answerText, { flex: 1 }]}>
+                                    <Text style={[styles.answerText, {flex: 1}]}>
                                         {answer.name}
                                         {feedback}
                                     </Text>
