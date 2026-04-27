@@ -1,6 +1,6 @@
-import {Animated, Button, StyleSheet, useColorScheme, useWindowDimensions, View} from 'react-native';
+import {Animated, Button, Pressable, StyleSheet, Text, useColorScheme, useWindowDimensions, View} from 'react-native';
 import {MD3DarkTheme, MD3LightTheme, PaperProvider, RadioButton} from "react-native-paper";
-import React, {useEffect} from "react";
+import React from "react";
 import AutoHeightImage from "react-native-auto-height-image";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import ScrollView = Animated.ScrollView;
@@ -117,6 +117,25 @@ const App = () => {
         return {};
     }
 
+    const getOptionLabel = (answer: Plane) => {
+        if (!isAnswered) {
+            return null;
+        }
+
+        const correctId = answerMap[correct].plane_id.toString();
+        const selectedId = checked;
+        const id = answer.plane_id.toString();
+
+        if (id === correctId) {
+            return "Correct!";
+        }
+        if (id === selectedId) {
+            return "Incorrect!";
+        }
+
+        return null;
+    }
+
     let answerMap: Plane[] = []
     answers.forEach((answer) => {
         answerMap.push(planeList[answer]);
@@ -131,18 +150,46 @@ const App = () => {
                         width={useWindowDimensions().width}
                     />
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
-                        {answerMap.map((answer, index) => (
-                            <View
-                                style={[styles.optionContainer, getOptionStyle(answer)]}
-                                key={answer.plane_id}>
-                                <RadioButton.Item
-                                    value={answer.plane_id.toString()}
-                                    label={answer.name}
-                                    position="leading"
-                                    disabled={isAnswered}
-                                />
-                            </View>
-                        ))}
+                        {answerMap.map((answer, index) => {
+                            const correctId = answerMap[correct].plane_id.toString();
+                            const selectedId = checked;
+                            const id = answer.plane_id.toString();
+
+                            let feedback = null;
+
+                            if (isAnswered) {
+                                if (id === correctId) {
+                                    feedback = <Text style={styles.correctText}> ✅ Correct</Text>;
+                                } else if (id === selectedId) {
+                                    feedback = <Text style={styles.incorrectText}> ❌ Incorrect</Text>;
+                                }
+                            }
+
+                            return (
+                                <Pressable
+                                    key={answer.plane_id}
+                                    onPress={() => !isAnswered && setChecked(id)}
+                                    style={({ pressed }) => [
+                                        styles.optionContainer,
+                                        getOptionStyle(answer),
+                                        styles.inlineRow,
+                                        pressed && !isAnswered && { opacity: 0.7 } // nice feedback
+                                    ]}
+                                >
+                                    <RadioButton
+                                        value={id}
+                                        status={checked === id ? 'checked' : 'unchecked'}
+                                        onPress={() => setChecked(id)}
+                                        disabled={isAnswered}
+                                    />
+
+                                    <Text style={[styles.answerText, { flex: 1 }]}>
+                                        {answer.name}
+                                        {feedback}
+                                    </Text>
+                                </Pressable>
+                            );
+                        })}
                     </RadioButton.Group>
                     <View style={styles.button}>
                         <Button
@@ -176,5 +223,21 @@ const styles = StyleSheet.create({
     },
     button: {
         marginHorizontal: 10
-    }
+    },
+    inlineRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    answerText: {
+        fontSize: 16,
+        color: '#FFFFFF',
+    },
+    correctText: {
+        color: '#2E7D32',
+        fontWeight: 'bold',
+    },
+    incorrectText: {
+        color: '#C62828',
+        fontWeight: 'bold',
+    },
 });
