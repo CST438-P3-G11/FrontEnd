@@ -27,10 +27,22 @@ const planeList: Plane[] = [
 const photoList: Photo[] = [
     {plane_id: 1, url: "https://cdn.jetphotos.com/full/2/15190_1063675846.jpg"},
     {plane_id: 2, url: "https://cdn.jetphotos.com/full/6/52128_1655584941.jpg"},
-    {plane_id: 3, url: "https://upload.wikimedia.org/wikipedia/commons/6/64/McDonnell_Douglas_MD-83_American_Airlines_N9615W_%288516015305%29.jpg"},
-    {plane_id: 4, url: "https://i0.wp.com/northwestairlineshistory.org/wp-content/uploads/2020/04/NWA_753_N591NW_MSP_2009-03_Norris.jpg"},
-    {plane_id: 5, url: "https://static0.simpleflyingimages.com/wordpress/wp-content/uploads/2021/02/French-bee-Airbus-A350-941-F-HREV-2-scaled.jpg"},
-    {plane_id: 6, url: "https://chapmanfreeborn.aero/wp-content/uploads/2025/01/Bombardier-Challenger-650-feature-image.jpg"}
+    {
+        plane_id: 3,
+        url: "https://upload.wikimedia.org/wikipedia/commons/6/64/McDonnell_Douglas_MD-83_American_Airlines_N9615W_%288516015305%29.jpg"
+    },
+    {
+        plane_id: 4,
+        url: "https://i0.wp.com/northwestairlineshistory.org/wp-content/uploads/2020/04/NWA_753_N591NW_MSP_2009-03_Norris.jpg"
+    },
+    {
+        plane_id: 5,
+        url: "https://static0.simpleflyingimages.com/wordpress/wp-content/uploads/2021/02/French-bee-Airbus-A350-941-F-HREV-2-scaled.jpg"
+    },
+    {
+        plane_id: 6,
+        url: "https://chapmanfreeborn.aero/wp-content/uploads/2025/01/Bombardier-Challenger-650-feature-image.jpg"
+    }
 ]
 
 const App = () => {
@@ -39,7 +51,6 @@ const App = () => {
     const theme = colorScheme === 'dark'
         ? {...MD3DarkTheme, colors: {...MD3DarkTheme.colors, onSurface: '#FFFFFF'}}
         : MD3LightTheme;
-    const [pressed, setPressed] = React.useState(false);
 
     //temporary functions to get a random ID from the list, remove/comment out once we're properly fetching from the backend
     const getAnswers = () => {
@@ -55,12 +66,22 @@ const App = () => {
     }
 
     //same as getAnswers
-    const pickPlane = () => {
+    const pickPlane = (answers: string | any[]) => {
         return Math.floor(Math.random() * answers.length);
     }
 
-    const answers = getAnswers();
-    const correct = pickPlane();
+    const [answers, setAnswers] = React.useState(getAnswers());
+    const [correct, setCorrect] = React.useState(pickPlane(answers));
+
+    const handlePress = () => {
+        const correctAnswer = answerMap[correct].name;
+
+        if (checked === correctAnswer) {
+            console.log("Correct");
+        } else {
+            console.log("Incorrect");
+        }
+    }
 
     let answerMap: Plane[] = []
     answers.forEach((answer) => {
@@ -72,7 +93,7 @@ const App = () => {
             <PaperProvider theme={theme}>
                 <ScrollView>
                     <AutoHeightImage
-                        source={{uri: photoList[correct].url}}
+                        source={{uri: photoList[answers[correct]].url}}
                         width={useWindowDimensions().width}
                     />
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
@@ -82,12 +103,16 @@ const App = () => {
                                     key={answer.plane_id}
                                     value={answer.name}
                                     label={answer.name}
+                                    position="leading"
                                 />
                             ))}
                         </View>
                     </RadioButton.Group>
                     <View style={styles.button}>
-                        <Button title="Submit"/>
+                        <Button
+                            title="Submit"
+                            onPress={handlePress}
+                        />
                     </View>
                 </ScrollView>
             </PaperProvider>
