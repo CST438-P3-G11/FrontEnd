@@ -1,8 +1,8 @@
 import {Animated, Button, Pressable, StyleSheet, Text, useColorScheme, useWindowDimensions, View} from 'react-native';
 import {MD3DarkTheme, MD3LightTheme, PaperProvider, RadioButton} from "react-native-paper";
 import React from "react";
-import AutoHeightImage from "react-native-auto-height-image";
 import {SafeAreaProvider} from "react-native-safe-area-context";
+import {Image} from 'expo-image'
 import ScrollView = Animated.ScrollView;
 
 interface Plane {
@@ -112,7 +112,8 @@ const App = () => {
     const [isAnswered, setIsAnswered] = React.useState(false);
     const [isCorrect, setIsCorrect] = React.useState<Boolean | null>(null);
     const [currentPhoto, setCurrentPhoto] = React.useState<Photo | null>(null);
-    const {width} = useWindowDimensions();
+    const {width: windowWidth} = useWindowDimensions();
+    const [aspectRatio, setAspectRatio] = React.useState(1);
 
     React.useEffect(() => {
         const plane = planeList[answers[correct]];
@@ -161,36 +162,10 @@ const App = () => {
 
         return {};
     }
-
-    const getOptionLabel = (answer: Plane) => {
-        if (!isAnswered) {
-            return null;
-        }
-
-        const correctId = answerMap[correct].plane_id.toString();
-        const selectedId = checked;
-        const id = answer.plane_id.toString();
-
-        if (id === correctId) {
-            return "Correct!";
-        }
-        if (id === selectedId) {
-            return "Incorrect!";
-        }
-
-        return null;
-    }
-
     let answerMap: Plane[] = []
     answers.forEach((answer) => {
         answerMap.push(planeList[answer]);
     })
-
-    const correctPlane = answerMap[correct];
-
-    const correctPhotos = photoList.filter(
-        (photo) => photo.plane_id === correctPlane.plane_id
-    );
 
     const pickRandomPhoto = (planeId: number) => {
         const photos = photoList.filter(p => p.plane_id === planeId);
@@ -202,9 +177,19 @@ const App = () => {
             <PaperProvider theme={theme}>
                 <ScrollView>
                     {currentPhoto && (
-                        <AutoHeightImage
-                            source={{ uri: currentPhoto.url }}
-                            width={width}
+                        <Image
+                            source={{uri: currentPhoto.url}}
+                            style={{
+                                width: windowWidth,
+                                aspectRatio: aspectRatio
+                            }}
+                            onLoad={({source}) => {
+                                if (source.width && source.height) {
+                                    setAspectRatio(source.width / source.height);
+                                }
+                            }}
+                            contentFit='contain'
+                            transition={200}
                         />
                     )}
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
@@ -298,4 +283,5 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontWeight: 'bold',
     },
+    image: {}
 });
