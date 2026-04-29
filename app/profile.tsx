@@ -4,12 +4,37 @@ import {Pressable, StyleSheet, TextInput} from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import {router} from "expo-router";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen() {
     // Initial value is inputUrl with '' and if there are changes setInputUrl will be used
     const [inputUrl, setInputUrl] = useState('');
     const [backgroundUrl, setBackgroundUrl] = useState('');
+
+    useEffect(() => {
+        loadBackground();
+    }, []);
+
+    const loadBackground = async () => {
+        try {
+            const savedUrl = await AsyncStorage.getItem('profileBackgroundUrl');
+            if (savedUrl) {
+                setBackgroundUrl(savedUrl);
+            }
+        } catch (error) {
+            console.log('Error loading background:', error);
+        }
+    };
+
+    const saveBackground = async () => {
+        try {
+            await AsyncStorage.setItem('profileBackgroundUrl', inputUrl);
+            setBackgroundUrl(inputUrl);
+        } catch (error) {
+            console.log('Error saving background:', error);
+        }
+    };
 
     return (
         <ImageBackground
@@ -50,7 +75,7 @@ export default function ProfileScreen() {
                 </Pressable>
                 <Pressable
                     style={styles.buttonSecondary}
-                    onPress={() => setBackgroundUrl(inputUrl)}
+                    onPress={saveBackground}
                 >
                     <ThemedText style={styles.buttonText}>Change Profile Background</ThemedText>
                 </Pressable>
