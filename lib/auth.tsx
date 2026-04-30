@@ -164,6 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       clientId: GITHUB_CLIENT_ID,
       scopes: ['read:user', 'user:email'],
       redirectUri: githubRedirectUri,
+      usePKCE: false,
     },
     githubDiscovery,
   );
