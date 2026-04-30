@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { useAuth } from '../../lib/auth';
 
-const API_BASE_URL = 'https://backend-eu81.onrender.com';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
 
 type Stats = {
   gamesPlayed: number;
@@ -11,36 +12,28 @@ type Stats = {
 };
 
 export default function StatsScreen() {
-//   const [stats, setStats] = useState<Stats | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const userId = user?.userId;
 
-//   const userId = 1;
-
-//   useEffect(() => {
-//     fetch(`${API_BASE_URL}/stats/getStats?userId=${userId}`)
-//       .then((res) => {
-//         if (!res.ok) throw new Error('Stats not found');
-//         return res.json();
-//       })
-//       .then((data) => {
-//         setStats(data);
-//         setLoading(false);
-//       })
-//       .catch((err) => {
-//         setError(err.message);
-//         setLoading(false);
-//       });
-//   }, []);
-  const stats = {
-    gamesPlayed: 10,
-    correctGuesses: 7,
-    winningStreak: 3,
-    bestStreak: 5,
-  };
-  const loading = false;
-  const error = null;
-  const userId = 1;
+  useEffect(() => {
+    if (!userId) return;
+    fetch(`${API_BASE_URL}/stats/getStats?userId=${userId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Stats not found');
+        return res.json();
+      })
+      .then((data) => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [userId]);
 
   if (loading) return <ActivityIndicator style={{ flex: 1 }} />;
   if (error) return <Text style={styles.error}>{error}</Text>;
