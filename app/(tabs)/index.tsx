@@ -6,29 +6,19 @@ import { ThemedView } from '@/components/themed-view';
 import {router} from "expo-router";
 import { useState, useEffect } from 'react';
 
-type LeaderboardEntry = {
-    user: { username: string };
-    bestStreak: number;
-  };
-export default function HomeScreen() {
-  
-  // TODO: replace hardcoded data with fetch from /getLeaderboard when backend is ready
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
 
-  // const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  // useEffect(() => {
-  //   fetch('https://backend-eu81.onrender.com/getLeaderboard')
-  //     .then(res => res.json())
-  //     .then(data => setLeaderboard(data));
-  // }, []);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([
-    { user: { username: "ace_spotter" }, bestStreak: 15 },
-    { user: { username: "planeguy99" }, bestStreak: 12 },
-    { user: { username: "jetfan42" }, bestStreak: 9 },
-    { user: { username: "planeguy94" }, bestStreak: 8 },
-    { user: { username: "jetfan40" }, bestStreak: 4 },
-    { user: { username: "planeguy92" }, bestStreak: 2 },
-    { user: { username: "jetfan38" }, bestStreak: 1 },
-  ]);
+type LeaderboardEntry = {
+    user: { name: string };
+    bestStreak: number;
+};
+export default function HomeScreen() {
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/stats/getLeaderboard`)
+      .then(res => res.json())
+      .then(data => setLeaderboard(data));
+  }, []);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -60,7 +50,7 @@ export default function HomeScreen() {
         {leaderboard.map((player, index) => (
           <ThemedView key={index} style={styles.leaderboardRow}>
             <ThemedText>#{index + 1}</ThemedText>
-            <ThemedText>{player.user.username}</ThemedText>
+            <ThemedText>{player.user.name}</ThemedText>
             <ThemedText>{player.bestStreak}</ThemedText>
           </ThemedView>
         ))}
