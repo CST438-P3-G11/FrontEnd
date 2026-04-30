@@ -6,8 +6,10 @@ import { ThemedView } from '@/components/themed-view';
 import {router} from "expo-router";
 import {useEffect, useState} from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '@/lib/auth';
 
 export default function ProfileScreen() {
+    const { user, signOut } = useAuth();
     // Initial value is inputUrl with '' and if there are changes setInputUrl will be used
     const [inputUrl, setInputUrl] = useState('');
     const [backgroundUrl, setBackgroundUrl] = useState('');
@@ -56,8 +58,8 @@ export default function ProfileScreen() {
                 </ThemedText>
 
                 <ThemedView style={styles.infoSection}>
-                    <ThemedText type="subtitle" style={styles.nameStyle}>testemail@csumb.edu</ThemedText>
-                    <ThemedText style={styles.nameStyle}>testUserName</ThemedText>
+                    <ThemedText type="subtitle" style={styles.nameStyle}>{user?.email ?? 'Not signed in'}</ThemedText>
+                    <ThemedText style={styles.nameStyle}>{user?.isAdmin ? 'Admin' : 'Member'}</ThemedText>
                 </ThemedView>
 
                 <TextInput
@@ -78,6 +80,15 @@ export default function ProfileScreen() {
                     onPress={saveBackground}
                 >
                     <ThemedText style={styles.buttonText}>Change Profile Background</ThemedText>
+                </Pressable>
+                <Pressable
+                    style={styles.buttonDanger}
+                    onPress={async () => {
+                        await signOut();
+                        router.replace('/login');
+                    }}
+                >
+                    <ThemedText style={styles.buttonText}>Sign out</ThemedText>
                 </Pressable>
             </ThemedView>
         </ImageBackground>
@@ -132,6 +143,16 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 12,
         marginTop: 20,
+        width: 260,
+        alignItems: 'center',
+    },
+    buttonDanger: {
+        backgroundColor: '#B00020',
+        paddingVertical: 14,
+        paddingHorizontal: 28,
+        borderRadius: 10,
+        marginBottom: 12,
+        marginTop: 8,
         width: 260,
         alignItems: 'center',
     },
