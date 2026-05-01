@@ -30,7 +30,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">PlanespOtter ✈️</ThemedText>
+        <ThemedText type="title">PlaneSpOtter ✈️</ThemedText>
 
         <Pressable
             style={styles.button}
