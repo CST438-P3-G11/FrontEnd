@@ -84,7 +84,7 @@ const App = () => {
     }
 
     const confirmDelete = (photoId: number) => {
-        if(Platform.OS === 'web') {
+        if (Platform.OS === 'web') {
             const ok = window.confirm("Are you sure you want to delete this photo?");
             if (ok) {
                 deletePhoto(photoId);
@@ -95,8 +95,8 @@ const App = () => {
             'Delete Photo',
             'Are you sure you want to delete this photo?',
             [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete', style: 'destructive', onPress: () => deletePhoto(photoId) },
+                {text: 'Cancel', style: 'cancel'},
+                {text: 'Delete', style: 'destructive', onPress: () => deletePhoto(photoId)},
             ]
         );
     };
@@ -130,6 +130,17 @@ const App = () => {
         <SafeAreaProvider>
             <PaperProvider theme={theme}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <View style={styles.header}>
+                        <Text style={styles.pageTitle}>My Photos</Text>
+                        <Button
+                            mode='contained'
+                            buttonColor='#2e7d32'
+                            textColor='white'
+                            labelStyle={styles.addLabel}
+                        >
+                            Add Photo
+                        </Button>
+                    </View>
                     {photos.map((photo, index) => {
                         return (
                             <View
@@ -203,4 +214,23 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '400',
     },
+    header: {
+        width: '100%',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#FFFFFF26',
+    },
+    pageTitle: {
+        color: '#ffffff',
+        fontSize: 24,
+        fontWeight: '700',
+    },
+    addLabel: {
+        fontSize: 16,
+        fontWeight: '400',
+    }
 });
