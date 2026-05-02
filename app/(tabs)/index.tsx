@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import {router} from "expo-router";
 import { useState, useEffect } from 'react';
+import {useAuth} from "@/lib/auth";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
 
@@ -14,8 +15,13 @@ type LeaderboardEntry = {
 };
 export default function HomeScreen() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const {token} = useAuth();
   useEffect(() => {
-    fetch(`${API_BASE_URL}/stats/getLeaderboard`)
+    fetch(`${API_BASE_URL}/stats/getLeaderboard`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
       .then(res => res.json())
       .then(data => setLeaderboard(data));
   }, []);

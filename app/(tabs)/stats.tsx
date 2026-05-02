@@ -15,12 +15,16 @@ export default function StatsScreen() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const userId = user?.userId;
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`${API_BASE_URL}/stats/getStats?userId=${userId}`)
+    fetch(`${API_BASE_URL}/stats/getStats?userId=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
       .then((res) => {
         if (!res.ok) throw new Error('Stats not found');
         return res.json();
