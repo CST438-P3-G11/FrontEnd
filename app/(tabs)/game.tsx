@@ -4,6 +4,7 @@ import React from "react";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {Image} from 'expo-image'
 import ScrollView = Animated.ScrollView;
+import {useAuth} from "@/lib/auth";
 
 const API_BASE_URL = process.env.EXPO_API_BASE_URL ?? 'http://localhost:8080';
 
@@ -22,6 +23,7 @@ interface Photo {
 
 
 const App = () => {
+    const {token} = useAuth();
     const [checked, setChecked] = React.useState('none');
     const colorScheme = useColorScheme();
     const theme = colorScheme === 'dark'
@@ -73,7 +75,11 @@ const App = () => {
 
     const loadQuestion = async () => {
         try {
-            const planeRes = await fetch(`${API_BASE_URL}/planes/getForGame`);
+            const planeRes = await fetch(`${API_BASE_URL}/planes/getForGame`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             const planeText = await planeRes.text();
 
             const planeData: Plane[] = planeText ? JSON.parse(planeText) : [];
@@ -82,7 +88,11 @@ const App = () => {
             const correctPlane = planeData[randomIndex];
 
             const photoRes = await fetch(
-                `${API_BASE_URL}/photos/getRandomByPlaneId?plane_id=${correctPlane.plane_id}`
+                `${API_BASE_URL}/photos/getRandomByPlaneId?plane_id=${correctPlane.plane_id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             );
             const photoData: Photo = await photoRes.json();
 
