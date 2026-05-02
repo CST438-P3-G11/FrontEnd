@@ -23,7 +23,7 @@ interface Photo {
 
 
 const App = () => {
-    const {token} = useAuth();
+    const {token, user} = useAuth();
     const [checked, setChecked] = React.useState('none');
     const colorScheme = useColorScheme();
     const theme = colorScheme === 'dark'
@@ -41,9 +41,14 @@ const App = () => {
         loadQuestion();
     }, []);
 
-    const handlePress = () => {
+    const handlePress = async () => {
         if (isAnswered) {
             loadQuestion();
+            return;
+        }
+
+        if (!user || !token || correctIndex === null) {
+            console.warn("Auth or game state not ready");
             return;
         }
 
@@ -52,6 +57,20 @@ const App = () => {
 
         setIsCorrect(result);
         setIsAnswered(true);
+
+        try {
+            await fetch(
+                `${API_BASE_URL}/stats/sendResult?userId=${user.userId}&result=${result}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+        } catch (err) {
+            console.error("Failed to send stats:", err);
+        }
     }
 
     const getOptionStyle = (answer: Plane) => {
@@ -63,11 +82,11 @@ const App = () => {
         const selectedId = checked;
 
         if (answer.plane_id.toString() === correctId) {
-            return { backgroundColor: '#4CAF50' };
+            return {backgroundColor: '#4CAF50'};
         }
 
         if (answer.plane_id.toString() === selectedId) {
-            return { backgroundColor: '#F44336' };
+            return {backgroundColor: '#F44336'};
         }
 
         return {};

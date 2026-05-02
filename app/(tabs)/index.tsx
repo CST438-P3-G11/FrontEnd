@@ -14,7 +14,7 @@ type LeaderboardEntry = {
     bestStreak: number;
 };
 export default function HomeScreen() {
-    const token = useAuth();
+    const {token} = useAuth();
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     useEffect(() => {
         const fetchData = async () => {
@@ -26,7 +26,7 @@ export default function HomeScreen() {
                 .then(res => res.json())
                 .then(data => setLeaderboard(data));
         }
-
+        fetchData();
     }, []);
     return (
         <ParallaxScrollView
