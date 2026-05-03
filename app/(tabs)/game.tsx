@@ -144,22 +144,31 @@ const App = () => {
         <SafeAreaProvider>
             <PaperProvider theme={theme}>
                 <ScrollView>
-                    {currentPhoto && (
-                        <Image
-                            source={{uri: currentPhoto.url}}
-                            style={{
-                                width: windowWidth,
-                                aspectRatio: aspectRatio
-                            }}
-                            onLoad={({source}) => {
-                                if (source.width && source.height) {
-                                    setAspectRatio(source.width / source.height);
+                    <View
+                        style={[
+                            styles.card,
+                            {width: windowWidth * 0.98},
+                        ]}
+                    >
+                        {currentPhoto && (
+                            <Image
+                                source={{uri: currentPhoto.url}}
+                                style={
+                                    [styles.image,
+                                        {
+                                            aspectRatio: aspectRatio
+                                        }]
                                 }
-                            }}
-                            contentFit='contain'
-                            transition={200}
-                        />
-                    )}
+                                onLoad={({source}) => {
+                                    if (source.width && source.height) {
+                                        setAspectRatio(source.width / source.height);
+                                    }
+                                }}
+                                contentFit='contain'
+                                transition={200}
+                            />
+                        )}
+                    </View>
                     <RadioButton.Group onValueChange={checked => setChecked(checked)} value={checked}>
                         {answerMap.map((answer, index) => {
                             const correctId = planes[correctIndex!].plane_id.toString();
@@ -251,5 +260,17 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontWeight: 'bold',
     },
-    image: {}
+    card: {
+        margin: 8,
+        backgroundColor: '#2c2c2e',
+        borderRadius: 12,
+        padding: 10,
+        elevation: 3,
+        overflow: 'hidden',
+        alignSelf: 'center',
+    },
+    image: {
+        width: '100%',
+        borderRadius: 8,
+    },
 });
