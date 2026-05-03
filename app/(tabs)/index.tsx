@@ -5,6 +5,7 @@ import {ThemedText} from '@/components/themed-text';
 import {ThemedView} from '@/components/themed-view';
 import {router} from "expo-router";
 import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import {useAuth} from "@/lib/auth";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
@@ -40,6 +41,29 @@ export default function HomeScreen() {
             }>
             <ThemedView style={styles.titleContainer}>
                 <ThemedText type="title">PlaneSpOtter ✈️</ThemedText>
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const {token} = useAuth();
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/stats/getLeaderboard`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then(res => res.json())
+      .then(data => setLeaderboard(data));
+  }, []);
+  return (
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerImage={
+        <Image
+          source={require('@/assets/images/logo_plane.png')}
+          style={styles.reactLogo}
+          contentFit = "contain"
+        />
+      }>
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="title">PlanespOtter ✈️</ThemedText>
 
                 <Pressable
                     style={styles.button}
