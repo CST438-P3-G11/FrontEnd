@@ -35,6 +35,11 @@ const App = () => {
     const [newPhotoUrl, setNewPhotoUrl] = React.useState('');
     const [newPlaneName, setNewPlaneName] = React.useState('');
 
+    const isWeb = Platform.OS === 'web';
+    const cardWidth = isWeb
+        ? windowWidth * 0.3
+        : windowWidth * 0.95;
+
     React.useEffect(() => {
         loadUserPhotos()
     }, [])
@@ -250,7 +255,10 @@ const App = () => {
                         return (
                             <View
                                 key={photo.photo_id}
-                                style={[styles.card, {width: windowWidth * 0.95}]}
+                                style={[
+                                    styles.card,
+                                    {width: cardWidth}
+                                ]}
                             >
 
                                 <Text style={styles.title}>
@@ -287,33 +295,73 @@ const App = () => {
                     <Dialog
                         visible={addDialogVisible}
                         onDismiss={() => setAddDialogVisible(false)}
+                        style={styles.dialog}
                     >
-                        <Dialog.Title>Add Photo</Dialog.Title>
+                        <Dialog.Title style={styles.dialogTitle}>Add Photo</Dialog.Title>
                         <Dialog.Content>
                             <TextInput
                                 label='Plane Name'
                                 value={newPlaneName}
                                 onChangeText={setNewPlaneName}
-                                style={{marginBottom: 10}}
+                                style={[{marginBottom: 10}, styles.input]}
+                                theme={{
+                                    colors: {
+                                        text: '#ffffff',
+                                        placeholder: '#aaaaaa',
+                                        primary: '#1e88e5',
+                                    },
+                                }}
                             />
 
                             <TextInput
                                 label='Photo URL'
                                 value={newPhotoUrl}
                                 onChangeText={setNewPhotoUrl}
+                                style={styles.input}
+                                theme={{
+                                    colors: {
+                                        text: '#ffffff',
+                                        placeholder: '#aaaaaa',
+                                        primary: '#1e88e5',
+                                    },
+                                }}
                             />
                         </Dialog.Content>
 
-                        <Dialog.Actions>
-                            <Button onPress={() => setAddDialogVisible(false)}>
+                        <Dialog.Actions style={styles.dialogActions}>
+                            <Button
+                                mode="contained"
+                                onPress={() => setAddDialogVisible(false)}
+                                buttonColor="#2A2A2A"
+                                textColor="#ffffff"
+                                style={styles.cancelButton}
+                                contentStyle={{
+                                    borderRadius: 20,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    paddingHorizontal: 16,
+                                }}
+                                labelStyle={styles.cancelLabel}
+                            >
                                 Cancel
                             </Button>
 
                             <Button
+                                mode="contained"
                                 onPress={() => {
                                     addPhoto(newPlaneName, newPhotoUrl);
                                     setAddDialogVisible(false);
                                 }}
+                                buttonColor="#333333"
+                                textColor="white"
+                                style={styles.submitButton}
+                                contentStyle={{
+                                    borderRadius: 20,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    paddingHorizontal: 16
+                                }}
+                                labelStyle={styles.submitLabel}
                             >
                                 Submit
                             </Button>
@@ -329,11 +377,15 @@ export default App;
 
 const styles = StyleSheet.create({
     scrollContainer: {
-        alignItems: 'center',
         paddingVertical: 10,
+        paddingHorizontal: 10,
+        flexDirection: Platform.OS === 'web' ? 'row' : 'column',
+        flexWrap: Platform.OS === 'web' ? 'wrap' : 'nowrap',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     card: {
-        marginVertical: 10,
+        margin: 8,
         backgroundColor: '#2c2c2e',
         borderRadius: 12,
         padding: 10,
@@ -377,5 +429,42 @@ const styles = StyleSheet.create({
     addLabel: {
         fontSize: 16,
         fontWeight: '400',
-    }
+    },
+    dialog: {
+        backgroundColor: '#1E1E1E',
+        borderRadius: 12,
+        elevation: 8,
+    },
+    dialogTitle: {
+        color: '#ffffff',
+    },
+    dialogActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        width: '100%',
+    },
+    input: {
+        backgroundColor: '#2A2A2A'
+    },
+    submitButton: {
+        marginLeft: 8,
+        borderRadius: 20,
+        elevation: 2,
+        overflow: 'hidden',
+    },
+    submitLabel: {
+        fontSize: 16,
+        fontWeight: '400',
+    },
+    cancelButton: {
+        marginRight: 8,
+        borderRadius: 20,
+        elevation: 2,
+        overflow: 'hidden',
+    },
+    cancelLabel: {
+        fontSize: 16,
+        fontWeight: '400',
+    },
 });
