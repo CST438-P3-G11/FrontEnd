@@ -20,12 +20,11 @@ export default function StatsScreen() {
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`${API_BASE_URL}/stats/getStats?userId=${userId}`,
-        {
-         headers: {
-           Authorization: `Bearer ${token}`,
-         }
-        })
+    fetch(`${API_BASE_URL}/stats/getStats?userId=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
       .then((res) => {
         if (!res.ok) throw new Error('Stats not found');
         return res.json();
