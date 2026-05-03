@@ -38,32 +38,32 @@ export default function HomeScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">PlanespOtter ✈️</ThemedText>
 
-                <Pressable
-                    style={styles.button}
-                    onPress={() => router.navigate('/game')}
-                >
-                    <ThemedText style={styles.buttonText}>Play Game</ThemedText>
-                </Pressable>
+        <Pressable
+            style={styles.button}
+            >
+          {/*onPress={() => router.push('/game')*/}
+          <ThemedText style={styles.buttonText}>Play Game</ThemedText>
+        </Pressable>
 
-                <Pressable
-                    style={styles.buttonSecondary}
-                    onPress={() => router.push('/profile')}
-                >
-                    <ThemedText style={styles.buttonText}>Profile</ThemedText>
-                </Pressable>
-                <ThemedText type="subtitle">Top Players</ThemedText>
+        <Pressable
+            style={styles.buttonSecondary}
+            onPress={() => router.push('/profile')}
+            >
+          <ThemedText style={styles.buttonText}>Profile</ThemedText>
+        </Pressable>
+        <ThemedText type="subtitle">Top Players</ThemedText>
 
-                {leaderboard.map((player, index) => (
-                    <ThemedView key={index} style={styles.leaderboardRow}>
-                        <ThemedText>#{index + 1}</ThemedText>
-                        <ThemedText>{player.user.name}</ThemedText>
-                        <ThemedText>{player.bestStreak}</ThemedText>
-                    </ThemedView>
-                ))}
+        {leaderboard.map((player, index) => (
+          <ThemedView key={index} style={styles.leaderboardRow}>
+            <ThemedText>#{index + 1}</ThemedText>
+            <ThemedText>{player.user.name}</ThemedText>
+            <ThemedText>{player.bestStreak}</ThemedText>
+          </ThemedView>
+        ))}
 
-            </ThemedView>
-        </ParallaxScrollView>
-    );
+      </ThemedView>
+    </ParallaxScrollView>
+  );
 }
 
 const styles = StyleSheet.create({

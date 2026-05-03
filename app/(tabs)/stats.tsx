@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useAuth } from '@/lib/auth';
+import { useAuth } from '../../lib/auth';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
 
@@ -20,11 +20,12 @@ export default function StatsScreen() {
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`${API_BASE_URL}/stats/getStats?userId=${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    })
+    fetch(`${API_BASE_URL}/stats/getStats?userId=${userId}`,
+        {
+         headers: {
+           Authorization: `Bearer ${token}`,
+         }
+        })
       .then((res) => {
         if (!res.ok) throw new Error('Stats not found');
         return res.json();
