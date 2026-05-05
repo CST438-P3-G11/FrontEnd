@@ -8,6 +8,8 @@ import {useEffect, useState} from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/lib/auth';
 
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
+
 function HeaderUser() {
     const { user, signOut } = useAuth();
 
@@ -85,7 +87,7 @@ export default function ProfileScreen() {
         const loadProfile = async () => {
             try {
                 const res = await fetch(
-                    `https://backend-eu81.onrender.com/user/currentUser`,
+                    `${API_BASE_URL}/user/currentUser`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -200,6 +202,15 @@ export default function ProfileScreen() {
                     >
                         <ThemedText style={styles.buttonText}>Change Profile Background</ThemedText>
                     </Pressable>
+
+                    {user?.isAdmin && (
+                        <Pressable
+                            style={styles.buttonDanger}
+                            onPress={() => router.push('/admin')}
+                        >
+                            <ThemedText style={styles.buttonText}>Admin Page</ThemedText>
+                        </Pressable>
+                    )}
 
                     {/*<Pressable*/}
                     {/*    style={styles.buttonDanger}*/}

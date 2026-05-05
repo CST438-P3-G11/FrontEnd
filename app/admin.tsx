@@ -16,6 +16,8 @@ export default function AdminUserSearchScreen() {
     const [loading, setLoading] = useState(false);
     const [allUsers, setAllUsers] = useState<any[]>([]);
 
+    const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
+
     // Find User by email
     const searchUserByEmail = async () => {
         if (!emailInput.trim() || !token) return;
@@ -26,7 +28,7 @@ export default function AdminUserSearchScreen() {
 
         try {
             const res = await fetch(
-                `https://backend-eu81.onrender.com/user/admin/findUser`,
+                `${API_BASE_URL}/user/admin/findUser`,
                 {
                     method: 'POST',
                     headers: {
@@ -59,7 +61,7 @@ export default function AdminUserSearchScreen() {
         if (!token) return;
 
         try {
-            const res = await fetch(`https://backend-eu81.onrender.com/user/admin`, {
+            const res = await fetch(`${API_BASE_URL}/user/admin`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -82,7 +84,7 @@ export default function AdminUserSearchScreen() {
 
     // Update User's Admin Status to an Admin
     const makeAdmin = async () => {
-        const res = await fetch(`https://backend-eu81.onrender.com/user/admin/makeAdmin`, {
+        const res = await fetch(`${API_BASE_URL}/user/admin/makeAdmin`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'text/plain',
@@ -104,7 +106,7 @@ export default function AdminUserSearchScreen() {
 
     // Update User's Admin Status to a Member (Non Admin)
     const removeAdmin = async () => {
-        const res = await fetch(`https://backend-eu81.onrender.com/user/admin/removeAdmin`, {
+        const res = await fetch(`${API_BASE_URL}/user/admin/removeAdmin`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'text/plain',
@@ -126,7 +128,7 @@ export default function AdminUserSearchScreen() {
 
     // Delete a User
     const deleteUser = async () => {
-        const res = await fetch(`https://backend-eu81.onrender.com/user/admin/deleteUser`, {
+        const res = await fetch(`${API_BASE_URL}/user/admin/deleteUser`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'text/plain',
@@ -150,12 +152,12 @@ export default function AdminUserSearchScreen() {
         <>
             <Stack.Screen
                 options={{
-                    title: 'Admin User Search',
+                    title: 'Admin',
                 }}
             />
 
             <ImageBackground
-                source={require('@/assets/images/default-background.png')}
+                source={require('@/assets/images/spongebob.jpg')}
                 style={styles.background}
                 imageStyle={styles.backgroundImage}
                 contentFit="fill"
