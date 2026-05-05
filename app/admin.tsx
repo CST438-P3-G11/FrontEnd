@@ -2,13 +2,13 @@ import { ImageBackground } from 'expo-image';
 import { Pressable, StyleSheet, TextInput, Text, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Stack } from 'expo-router';
-import { useState } from 'react';
+import { Stack, router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { ScrollView } from 'react-native';
 
 export default function AdminUserSearchScreen() {
-    const { token } = useAuth();
+    const { user, token } = useAuth();
 
     const [emailInput, setEmailInput] = useState('');
     const [searchedUser, setSearchedUser] = useState<any>(null);
@@ -17,6 +17,17 @@ export default function AdminUserSearchScreen() {
     const [allUsers, setAllUsers] = useState<any[]>([]);
 
     const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
+
+    // Checking if user is admin
+    useEffect(() => {
+        if (user && !user.isAdmin) {
+            router.replace('/profile');
+        }
+    }, [user]);
+
+    if (!user) return null;
+    if (!user.isAdmin) return null;
+
 
     // Find User by email
     const searchUserByEmail = async () => {
