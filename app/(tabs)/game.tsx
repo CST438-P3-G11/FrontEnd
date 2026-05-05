@@ -6,7 +6,7 @@ import {Image} from 'expo-image'
 import ScrollView = Animated.ScrollView;
 import {useAuth} from "@/lib/auth";
 
-const API_BASE_URL = process.env.EXPO_API_BASE_URL ?? 'http://localhost:8080';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
 
 interface Plane {
     plane_id: number;
