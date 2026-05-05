@@ -1,8 +1,8 @@
-import { Image } from 'expo-image';
+import {Image} from 'expo-image';
 import {Pressable, StyleSheet} from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import {ThemedText} from '@/components/themed-text';
+import {ThemedView} from '@/components/themed-view';
 import {router} from "expo-router";
 import { useState, useEffect } from 'react';
 import {useAuth} from "@/lib/auth";
@@ -67,46 +67,46 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    // justifyContent: 'center',
-    gap: 8,
+    titleContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        // justifyContent: 'center',
+        gap: 8,
 
-  },
-  reactLogo: {
-    height: '100%',
-    width: '100%',
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  button: {
-    backgroundColor: '#1d72ff',
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    borderRadius: 10,
-    marginBottom: 12,
-    marginTop: 20,
-    width: 220,
-    alignItems: 'center',
-  },
-  buttonSecondary: {
-    backgroundColor: '#2a2f36',
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    borderRadius: 10,
-    width: 220,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  leaderboardRow: {
-    flexDirection: 'row',
-    gap: 12,
-    paddingVertical: 4,
-  }
+    },
+    reactLogo: {
+        height: '100%',
+        width: '100%',
+        bottom: 0,
+        left: 0,
+        position: 'absolute',
+    },
+    button: {
+        backgroundColor: '#1d72ff',
+        paddingVertical: 14,
+        paddingHorizontal: 28,
+        borderRadius: 10,
+        marginBottom: 12,
+        marginTop: 20,
+        width: 220,
+        alignItems: 'center',
+    },
+    buttonSecondary: {
+        backgroundColor: '#2a2f36',
+        paddingVertical: 14,
+        paddingHorizontal: 28,
+        borderRadius: 10,
+        width: 220,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    leaderboardRow: {
+        flexDirection: 'row',
+        gap: 12,
+        paddingVertical: 4,
+    }
 });
