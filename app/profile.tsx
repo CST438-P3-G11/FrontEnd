@@ -1,19 +1,59 @@
 import {Image, ImageBackground} from 'expo-image';
-import {Pressable, StyleSheet, TextInput} from 'react-native';
+import { Pressable, StyleSheet, TextInput, Text, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import {router} from "expo-router";
+import { Stack, router } from 'expo-router';
 import {useEffect, useState} from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/lib/auth';
 
-export default function ProfileScreen() {
+function HeaderUser() {
     const { user, signOut } = useAuth();
+
+    if (!user) return null;
+
+    const initial = (user.email?.[0] ?? '?').toUpperCase();
+
+    return (
+        <View style={headerStyles.row}>
+            <Pressable
+                onPress={() => router.push('/profile')}
+                style={headerStyles.avatar}
+                accessibilityLabel={`Profile for ${user.email}`}
+            >
+                <Text style={headerStyles.avatarText}>{initial}</Text>
+            </Pressable>
+
+            <Pressable
+                onPress={async () => {
+                    await signOut();
+                    router.replace('/login');
+                }}
+                style={({ pressed }) => [
+                    headerStyles.signOut,
+                    pressed && { opacity: 0.6 },
+                ]}
+            >
+                <Text style={headerStyles.signOutText}>Sign out</Text>
+            </Pressable>
+        </View>
+    );
+}
+
+
+export default function ProfileScreen() {
+    const { user, token, signOut } = useAuth();
+
     // Initial value is inputUrl with '' and if there are changes setInputUrl will be used
     const [inputUrl, setInputUrl] = useState('');
     const [backgroundUrl, setBackgroundUrl] = useState('');
 
+    // For changing Name
+    const [name, setName] = useState('');
+    const [nameInput, setNameInput] = useState('');
+
+    // For background
     useEffect(() => {
         loadBackground();
     }, []);
@@ -38,62 +78,144 @@ export default function ProfileScreen() {
         }
     };
 
-    return (
-        <ImageBackground
-            source={
-                backgroundUrl
-                    ? { uri: backgroundUrl }
-                    : require('@/assets/images/default-background.png')
+    // For update name or not
+    useEffect(() => {
+        if (!user?.email || !token) return;
+
+        const loadProfile = async () => {
+            try {
+                const res = await fetch(
+                    `https://backend-eu81.onrender.com/user/currentUser`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (!res.ok) {
+                    throw new Error(`Failed to load profile: ${res.status}`);
+                }
+
+                const data = await res.json();
+
+                setName(data.name ?? '');
+                setNameInput(data.name ?? '');
+                console.log('Current user from backend:', data);
+            } catch (error) {
+                console.log('Error loading profile:', error);
             }
-            style={styles.background}
-            imageStyle={styles.backgroundImage}
-            /*Stretches the image to cover the entire screen, basically fitting it~~*/
-            contentFit={'fill'}
-        >
+        };
 
-            <ThemedView style = {styles.container}>
-                {/*Inline Styling example*/}
-                <ThemedText type = 'title' style={{color : 'white', fontWeight : 900}}>
-                    Profile
-                </ThemedText>
+        loadProfile();
+    }, [user?.email, token]);
 
-                <ThemedView style={styles.infoSection}>
-                    <ThemedText type="subtitle" style={styles.nameStyle}>{user?.email ?? 'Not signed in'}</ThemedText>
-                    <ThemedText style={styles.nameStyle}>{user?.isAdmin ? 'Admin' : 'Member'}</ThemedText>
+    const saveName = async () => {
+        if (!user?.email || !token) return;
+
+        try {
+            const res = await fetch(
+                `https://backend-eu81.onrender.com/user/updateName`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: nameInput,
+                }
+            );
+
+            if (!res.ok) {
+                throw new Error(`Failed to update name: ${res.status}`);
+            }
+
+            const data = await res.json();
+
+            setName(data.name ?? nameInput);
+        } catch (error) {
+            console.log('Error saving name:', error);
+        }
+    };
+
+    return (
+        // This is for the top bar, to show header, since it's outside the tabs folder
+        <>
+            <Stack.Screen
+                options={{
+                    title: 'Profile',
+                    headerRight: () => <HeaderUser />,
+                }}
+            />
+
+            <ImageBackground
+                source={
+                    backgroundUrl
+                        ? { uri: backgroundUrl }
+                        : require('@/assets/images/default-background.png')
+                }
+                style={styles.background}
+                imageStyle={styles.backgroundImage}
+                /*Stretches the image to cover the entire screen, basically fitting it~~*/
+                contentFit={'fill'}
+            >
+
+                <ThemedView style = {styles.container}>
+                    {/*Inline Styling example*/}
+                    <ThemedText type = 'title' style={{color : 'white', fontWeight : 900}}>
+                        Profile
+                    </ThemedText>
+
+                    <ThemedView style={styles.infoSection}>
+                        <ThemedText type="subtitle" style={styles.nameStyle}>{user?.email ?? 'Not signed in'}</ThemedText>
+                        <ThemedText style={styles.nameStyle}>{user?.isAdmin ? 'Admin' : 'Member'}</ThemedText>
+                        <ThemedText style={styles.nameStyle}>{name || 'No Name'}</ThemedText>
+                    </ThemedView>
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter New Name"
+                        value={nameInput}
+                        onChangeText={setNameInput}
+                        autoCapitalize="none"
+                    />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Paste image URL here"
+                        value={inputUrl}
+                        onChangeText={setInputUrl}
+                        autoCapitalize="none"
+                    />
+                    <Pressable
+                        style={styles.buttonSecondary}
+                        onPress={saveName}
+                    >
+                        <ThemedText style={styles.buttonText}>Change Name</ThemedText>
+                    </Pressable>
+
+                    <Pressable
+                        style={styles.buttonSecondary}
+                        onPress={saveBackground}
+                    >
+                        <ThemedText style={styles.buttonText}>Change Profile Background</ThemedText>
+                    </Pressable>
+
+                    {/*<Pressable*/}
+                    {/*    style={styles.buttonDanger}*/}
+                    {/*    onPress={async () => {*/}
+                    {/*        await signOut();*/}
+                    {/*        router.replace('/login');*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    <ThemedText style={styles.buttonText}>Sign out</ThemedText>*/}
+                    {/*</Pressable>*/}
                 </ThemedView>
+            </ImageBackground>
+        </>
+    )
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Paste image URL here"
-                    value={inputUrl}
-                    onChangeText={setInputUrl}
-                    autoCapitalize="none"
-                />
-                <Pressable
-                    style={styles.buttonSecondary}
-                    onPress={() => router.back()}
-                >
-                    <ThemedText style={styles.buttonText}>Edit Name</ThemedText>
-                </Pressable>
-                <Pressable
-                    style={styles.buttonSecondary}
-                    onPress={saveBackground}
-                >
-                    <ThemedText style={styles.buttonText}>Change Profile Background</ThemedText>
-                </Pressable>
-                <Pressable
-                    style={styles.buttonDanger}
-                    onPress={async () => {
-                        await signOut();
-                        router.replace('/login');
-                    }}
-                >
-                    <ThemedText style={styles.buttonText}>Sign out</ThemedText>
-                </Pressable>
-            </ThemedView>
-        </ImageBackground>
-    );
-}
+};
 
 const styles = StyleSheet.create({
     background: {
@@ -152,7 +274,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 28,
         borderRadius: 10,
         marginBottom: 12,
-        marginTop: 8,
+        marginTop: 20,
         width: 260,
         alignItems: 'center',
     },
@@ -160,5 +282,37 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: '600',
+    },
+});
+
+// For Header Style
+const headerStyles = StyleSheet.create({
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginRight: 16,
+    },
+    avatar: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: '#4285F4',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    avatarText: {
+        color: 'white',
+        fontWeight: '700',
+        fontSize: 14,
+    },
+    signOut: {
+        paddingVertical: 6,
+        paddingHorizontal: 4,
+    },
+    signOutText: {
+        color: '#B00020',
+        fontWeight: '600',
+        fontSize: 14,
     },
 });
