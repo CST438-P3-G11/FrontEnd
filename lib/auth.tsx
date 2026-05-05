@@ -123,8 +123,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // --- Google ---
   // responseType 'id_token' forces the implicit flow so Google returns the
   // ID token directly to the browser. expo-auth-session adds a nonce for us.
+  // androidClientId is used when running as a native Android build; falls back
+  // to webClientId via the Expo proxy when undefined (e.g. in Expo Go).
   const [googleRequest, googleResponse, googlePrompt] = Google.useAuthRequest({
     webClientId: GOOGLE_WEB_CLIENT_ID,
+    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
     scopes: ['openid', 'profile', 'email'],
     responseType: AuthSession.ResponseType.IdToken,
   });
