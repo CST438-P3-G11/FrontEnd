@@ -19,7 +19,7 @@ describe('HomeScreen', () => {
     it('renders UI text', async () => {
         const {getByText} = render(<HomeScreen/>);
 
-        expect(await getByText('PlanespOtter ✈️')).toBeTruthy();
+        expect(await getByText('PlaneSpOtter ✈️')).toBeTruthy();
         expect(await getByText('Play Game')).toBeTruthy();
         expect(await getByText('Profile')).toBeTruthy();
         expect(await getByText('Top Players')).toBeTruthy();
